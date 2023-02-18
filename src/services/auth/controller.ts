@@ -93,7 +93,7 @@ export default {
 
   /**
    *
-   * find user
+   * verify login
    *
    */
 
@@ -101,7 +101,7 @@ export default {
     try {
       const data = req.body;
       const user = await service.verifyLogin(data);
-      APIresponse(res, 201, 'User verified successfully and logged in', user);
+      APIresponse(res, 201, 'OTP verified successfully and user logged in', user);
     } catch (error) {
       next(error);
     }
@@ -142,7 +142,18 @@ async changePassword(req: Request, res: Response, next: NextFunction) {
     const payload = {...req.body, id, role};
     const data = await service.changePassword(payload);
 
-    APIresponse(res, 201, 'Password changed successfully', data);
+    APIresponse(res, 201, 'Please verify the OTP sent to you mail to complete your passwor reset process', data);
+  } catch (error) {
+    next(error);
+  }
+},
+
+async resetPassword(req: Request, res: Response, next: NextFunction) {
+  try {
+    const payload = req.body;
+    const data = await service.resetPassword(payload);
+
+    APIresponse(res, 201, 'Password reset successful', data);
   } catch (error) {
     next(error);
   }

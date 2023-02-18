@@ -7,6 +7,7 @@
 import { Router } from 'express';
 import middleware from './middleware';
 import controller from './controller';
+import { verifyAcessToken } from '../../commons';
 
 /**
  *
@@ -52,11 +53,13 @@ authRouter.post('/initiate-login', [middleware.findUser, controller.findUser]);
 
 authRouter.post('/verify-login', [controller.verifyLogin]);
 
-authRouter.post('/add-doctor', [controller.addDoctor])
+authRouter.post('/add-doctor', [verifyAcessToken, controller.addDoctor])
 
-authRouter.post('/change-password', [controller.changePassword])
+authRouter.post('/change-password', [verifyAcessToken, controller.changePassword])
 
 authRouter.post('/forget-password', [controller.fogetPassword])
+
+authRouter.post('/reset-password', [controller.resetPassword])
 
 
 

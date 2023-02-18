@@ -1866,7 +1866,7 @@ export const AddDoctorTemplate = (verification_code: string, email: string) => {
 
 
 
-export const ForgetPasswordTemplate = (verification_link: string) => {
+export const ForgetPasswordTemplate = (otp: string) => {
                         const loginTemplate = `<!DOCTYPE html>
                         <html>
                           <head>
@@ -2128,11 +2128,11 @@ export const ForgetPasswordTemplate = (verification_link: string) => {
                                               </p>
                                           
                                               <p>
-                                                Kindly kindly click on the link below!
+                                                Kindly enter the otp code below to confirm your password reset!
                                               </p>
                                           
                                               <p>
-                                                <a href='${verification_link}'>Password Reset Link</a>
+                                                <strong>OTP: ${otp}</strong>
                                               </p>
                                           
                                               Regards.

@@ -59,9 +59,13 @@ export default {
 
     const otp = generate2FACode();
     console.log(otp);
+    const thirtyMinutesLater = new Date();
+    await thirtyMinutesLater.setMinutes(thirtyMinutesLater.getMinutes() + 30);
+    const expiration_time = thirtyMinutesLater;
     const otpData = await VendorOtp.create({
       email: LCEmail,
       otp,
+      expiration_time,
     });
 
     setImmediate(async () => {
@@ -105,9 +109,13 @@ export default {
     
     const otp = generate2FACode();
     console.log(otp);
+    const thirtyMinutesLater = new Date();
+    await thirtyMinutesLater.setMinutes(thirtyMinutesLater.getMinutes() + 30);
+    const expiration_time = thirtyMinutesLater;
     const otpData = await VendorOtp.create({
       email: LCEmail,
       otp,
+      expiration_time,
     });
     setImmediate(async () => {
       await SendEmail({
@@ -123,7 +131,7 @@ export default {
 
 /**
    *
-   * VerifyUser
+   * Verify User
    *
    */
 
@@ -152,7 +160,16 @@ async verifyUser(params: { email: string, otp: string }) {
   if (!checkOtp) {
     throw new APIError({
       status: 403,
-      message: "Invalid OTP supplied",
+      message: "Invalid OTP supplied. Please request for a new OTP and use only the latest OTP to verify your account",
+      path: "otp",
+    });
+  }
+  // Check if OTP is expired
+  const now = new Date();
+  if (now > checkOtp.expiration_time) {
+    throw new APIError({
+      status: 403,
+      message: "OTP has expired. Please request for a new OTP",
       path: "otp",
     });
   }
@@ -216,6 +233,8 @@ async verifyUser(params: { email: string, otp: string }) {
         path: "password",
       });
     }
+    // Delete all previous otps
+     await VendorLoginOtp.deleteMany({ email: LCEmail });
     // Generate vendor 2fa otp code
     const loginVerificationCode = generate2FACode();
     const otp = new VendorLoginOtp();
@@ -265,7 +284,7 @@ async verifyUser(params: { email: string, otp: string }) {
     if (!otpData ) {
       throw new APIError({
         status: 404,
-        message: "Invalid OTP, No OTP generated for this email.",
+        message: "Invalid OTP or another OTP has been generated. Please only use the latest OTP to login",
         path: "otp",
       });
     }
@@ -280,7 +299,7 @@ async verifyUser(params: { email: string, otp: string }) {
     if(new Date() > otpData.expiration_time) {
       throw new APIError({
         status: 404,
-        message: "OTP has expired",
+        message: "OTP has expired. Please login again to generate a new OTP",
         path: "otp",
       });
     }
@@ -399,26 +418,107 @@ async forgotPassword(params: { email: string }) {
     });
   }
 
-  // Generate token
-   const Token = generate2FACode();
+    const resetVerificationCode = generate2FACode();
+    // const otp = new VendorLoginOtp();
+    // otp.email = email;
+    // otp.otp = loginVerificationCode;
+
+    const fiveMinutesLater = new Date();
+    await fiveMinutesLater.setMinutes(fiveMinutesLater.getMinutes() + 5);
+    const expiration_time = fiveMinutesLater;
+    // await otp.save();
+
   const token = await jwt.encode({ id: user.id, role: user.role });
+
   // const link = `https://localhost:5200/api/auth/reset-password?token=${resetToken}&id=${vendor._id}`;
 
   const otpData = await VendorLoginOtp.create({
+
     email: LCEmail,
-    otp: Token,
+    otp: resetVerificationCode,
+    expiration_time,
+    used: false,
   });
-  const fiveMinutesLater = new Date();
-  await fiveMinutesLater.setMinutes(fiveMinutesLater.getMinutes() + 5);
-  otpData.expiration_time = fiveMinutesLater;
-  await otpData.save();
+  // const fiveMinutesLater = new Date();
+  // await fiveMinutesLater.setMinutes(fiveMinutesLater.getMinutes() + 5);
+  // otpData.expiration_time = fiveMinutesLater;
+  // await otpData.save();
   setImmediate(async () => {
     await SendEmail({
       email,
       subject: "Reset Password",
-      body: ForgetPasswordTemplate(Token),
+      body: ForgetPasswordTemplate(resetVerificationCode),
     })
   });
+    return { token, user };
+},
 
+/**
+ * Reset Password
+ * @param params
+ * @returns
+ * @throws
+ * @description
+ * This function is used to reset password
+ * 
+ * 
+ */
+
+async resetPassword(params: { email: string, otp: string, password: string, confirmPassword: string }) {
+  const { email, otp, password, confirmPassword } = params;
+  const LCEmail = email.toLowerCase();
+  if (password !== confirmPassword) {
+    throw new APIError({
+      status: 403,
+      message: "Passwords do not match",
+      path: "password",
+    });
+  }
+  const user = await userModel.findOne({ email: LCEmail });
+  if (!user) {
+    throw new APIError({
+      status: 404,
+      message: "user does not exist or invalid email",
+      path: "email",
+    });
+  }
+  if(password === user.password) {
+    throw new APIError({
+      status: 403,
+      message: "You cannot use your previous password",
+      path: "password",
+    });
+  }
+
+  const resetOtp = await VendorLoginOtp.findOne({ email: LCEmail, otp: otp, used: false });
+  if (!resetOtp) {
+    throw new APIError({
+      status: 404,
+      message: "Invalid OTP or OTP has been used or a new OTP has been generated. Please login again to generate a new OTP. Make sure you are using only the latest OTP sent to your email",
+      path: "otp",
+    });
+  }
+  const currentTime = new Date();
+  if (currentTime > resetOtp.expiration_time) {
+    throw new APIError({
+      status: 404,
+      message: "OTP has expired. Please login again to generate a new OTP",
+      path: "otp",
+    });
+  }
+  const hashedPassword = await hashPassword(password);
+  const updatedUser = await userModel.findOneAndUpdate({ email: LCEmail }, { password: hashedPassword }, { new: true });
+  if (!updatedUser) {
+    throw new APIError({
+      status: 404,
+      message: "User does not exist",
+      path: "user",
+    });
+  }
+  // Delete used OTP
+  await VendorLoginOtp.deleteMany({ email: LCEmail });
+  const token = await jwt.encode({ id: updatedUser.id, role: updatedUser.role });
+  return { token, user: updatedUser};
 }
+
 }

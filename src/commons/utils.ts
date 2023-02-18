@@ -120,9 +120,11 @@ export async function verifyAcessToken(
   try {
     const authHeader = req.headers["authorization"];
     const bearerToken = handleAuthHeader(authHeader);
+    console.log("bearerToken", bearerToken)
 
     const token = bearerToken.split(" ")[1];
     const decoded: IDecoded = await jwt.decode({ token });
+    console.log("decoded", decoded);
 
     req.decoded = { id: decoded.id, role: decoded.role };
     next();
