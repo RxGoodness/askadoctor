@@ -35,10 +35,7 @@ export default {
     // const CCFirstName = this.capitalize(firstName);
     // const CCLastName = this.capitalize(lastName);
     const duplicate = await userModel.findOne({ email: LCEmail })
-      // username: await userModel.findOne({ username: LCUsername }),
 
-    //{ 'country': { $regex: new RegExp(`^${countryName}$`, 'i') } };
-    //console.log(duplicate);
     if (duplicate) {
       throw new APIError({
         status: 403,
@@ -47,20 +44,6 @@ export default {
       });
     }
 
-    // if (duplicate.email) {
-    //   throw new APIError({
-    //     status: 403,
-    //     message: "A user with this email already exists",
-    //     path: "email",
-    //   });
-    // }
-    // if (password !== confirmPassword) {
-    //   throw new APIError({
-    //     status: 403,
-    //     message: "Passwords do not match",
-    //     path: "password",
-    //   });
-    // }
     const hashedPassword = await hashPassword(password);
 
     const user = await userModel.create({
@@ -74,16 +57,6 @@ export default {
     });
     const accessToken = await jwt.encode({ id: user.id, role: user.role });
 
-    // Generate vendor 2fa otp code
-    // const verificationCode = generate2FACode();
-    // const otp = new VendorLoginOtp();
-    // otp.email = email;
-    // otp.otp = verificationCode;
-
-    // const fiveMinutesLater = new Date();
-    // await fiveMinutesLater.setMinutes(fiveMinutesLater.getMinutes() + 5);
-    // otp.expiration_time = fiveMinutesLater;
-    // await otp.save();
     const otp = generate2FACode();
     console.log(otp);
     const otpData = await VendorOtp.create({
@@ -111,14 +84,12 @@ export default {
 
   async sendVerification(params: { email: string }) {
     const { email } = params;
-    // console.log(11111111)
     const LCEmail = email.toLowerCase();
     const user = await userModel.findOne({ email: LCEmail });
     if(!user) {
       throw new APIError({
         status: 404,
         message: "user does not exist. Verification mail can only be sent to a user that has signed up. Proceed to sign up",
-        //  proceed to sign-up",
         path: "email",
       });
     };
@@ -131,7 +102,6 @@ export default {
     }
 
     const cancelOtp = await VendorOtp.findOneAndDelete({ email: LCEmail });
-    // const checkExistingOtp = await VendorOtp.findOne({ email: LCEmail });
     
     const otp = generate2FACode();
     console.log(otp);
@@ -159,7 +129,6 @@ export default {
 
 async verifyUser(params: { email: string, otp: string }) {
   const { email, otp } = params;
-  console.log("check1", email, otp)
   const LCEmail = email.toLowerCase();
   const user =  await userModel.findOne({ email: LCEmail })
   if (!user) {
@@ -188,19 +157,6 @@ async verifyUser(params: { email: string, otp: string }) {
     });
   }
 
-  console.log("check2", otp, checkOtp, typeof otp, typeof checkOtp.otp, otp !== checkOtp.otp)
-
-  // if (otp !== checkOtp.otp) {
-  //   throw new APIError({
-  //     status: 403,
-  //     message: "Invalid OTP supplied",
-  //     path: "otp",
-  //   });
-  // }
-  // console.log("check2", typeof otp, typeof checkOtp.otp)
-
-  // Update user to verified
-
   const cancelOtp = await VendorOtp.findOneAndDelete({ email: LCEmail, otp });
   const updatedUser = await userModel.findOneAndUpdate({ email: LCEmail }, { is_verified: true }, { new: true });
   if(!updatedUser) {
@@ -221,106 +177,8 @@ async verifyUser(params: { email: string, otp: string }) {
   
   const accessToken = await jwt.encode({ id: updatedUser.id, role: updatedUser.role });
 
-
-  // const { id, role } = user.userData;
-  // const accessToken = await jwt.encode({ id: id, role: role });
-
   return { accessToken, updatedUser };
 },
-
-
-
-
-
-
-
-  /**
-   *
-   * confirm user
-   *
-   */
-
-
-  // async confirmUser(params: IUser) {
-
-
-  //   // const emailToken: any = decode(
-  //   //   req.params.token as string,
-  //   //   process.env.JWT_EMAIL_KEY as string,
-  //   // );
-  //   // console.log(emailToken)
-
-
-
-
-
-
-  //   const { username, email, firstName, lastName } = params;
-  //   const LCEmail = email.toLowerCase();
-  //   const LCUsername = username.toLowerCase();
-  //   const CCFirstName = this.capitalize(firstName);
-  //   const CCLastName = this.capitalize(lastName);
-  //   const duplicate = {
-  //     email: await userModel.findOne({ email: LCEmail }),
-  //     username: await userModel.findOne({ username: LCUsername }),
-  //   };
-  //   //{ 'country': { $regex: new RegExp(`^${countryName}$`, 'i') } };
-  //   //console.log(duplicate);
-  //   if (duplicate.username) {
-  //     throw new APIError({
-  //       status: 403,
-  //       message: "A user with this username already exists",
-  //       path: "username",
-  //     });
-  //   }
-
-  //   if (duplicate.email) {
-  //     throw new APIError({
-  //       status: 403,
-  //       message: "A user with this email already exists",
-  //       path: "email",
-  //     });
-  //   }
-
-  //   const user = await userModel.findById({
-  //     id: emailToken.id, role: emailToken.role
-  //   });
-  //   if (!user) {throw new APIError({
-  //     status: 403,
-  //     message: 'We were unable to find a user for this verification process. Please SignUp!',
-  //     path: "email",
-  //   });
-  // }
-  // {
-  //   user.is_confirmed = true;
-  //   await user.save();
-  // }
-  //   const accessToken = await jwt.encode({ id: user.id, role: user.role });
-
-  //   setImmediate(async () => {
-  //     await SendEmail({
-  //       email,
-  //       subject: "Welcome To askadoctor",
-  //       body: signupTemplate,
-  //     }).then(() => {
-  //       console.log('email sent');
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });;
-  //   });
-
-  //   return { accessToken, user };
-  // },
-
-
-
-
-
-
-
-
-
 
 
 
@@ -435,13 +293,7 @@ async verifyUser(params: { email: string, otp: string }) {
     const accessToken = await jwt.encode({ id: id, role: role });
 
     return { accessToken, user };
-    // if (otpData.otp !== otp) {
-    //   throw new APIError({
-    //     status: 404,
-    //     message: "Invalid OTP",
-    //     path: "otp",
-    //   });
-    // }
+    
 },
 
 /**
@@ -460,10 +312,6 @@ async addDoctor(params: IUser ){
   // const CCFirstName = this.capitalize(firstName);
   // const CCLastName = this.capitalize(lastName);
   const duplicate = await userModel.findOne({ email: LCEmail })
-    // username: await userModel.findOne({ username: LCUsername }),
-
-  //{ 'country': { $regex: new RegExp(`^${countryName}$`, 'i') } };
-  //console.log(duplicate);
   if (duplicate) {
     throw new APIError({
       status: 403,
@@ -472,26 +320,10 @@ async addDoctor(params: IUser ){
     });
   }
 
-  // if (duplicate.email) {
-  //   throw new APIError({
-  //     status: 403,
-  //     message: "A user with this email already exists",
-  //     path: "email",
-  //   });
-  // }
-  // if (password !== confirmPassword) {
-  //   throw new APIError({
-  //     status: 403,
-  //     message: "Passwords do not match",
-  //     path: "password",
-  //   });
-  // }
+  
   const password = doctorPassword(2,6);
   console.log(doctorPassword);
-  // const otpData = await VendorOtp.create({
-  //   email: LCEmail,
-  //   otp,
-  // });
+  
   const hashedPassword = await hashPassword(password);
 
   const user = await userModel.create({
@@ -506,23 +338,6 @@ async addDoctor(params: IUser ){
     password: hashedPassword,
   });
   const accessToken = await jwt.encode({ id: user.id, role: user.role });
-
-  // Generate vendor 2fa otp code
-  // const verificationCode = generate2FACode();
-  // const otp = new VendorLoginOtp();
-  // otp.email = email;
-  // otp.otp = verificationCode;
-
-  // const fiveMinutesLater = new Date();
-  // await fiveMinutesLater.setMinutes(fiveMinutesLater.getMinutes() + 5);
-  // otp.expiration_time = fiveMinutesLater;
-  // await otp.save();
-  // const otp = generate2FACode();
-  // console.log(otp);
-  // const otpData = await VendorOtp.create({
-  //   email: LCEmail,
-  //   otp,
-  // });
 
   setImmediate(async () => {
     await SendEmail({
@@ -562,6 +377,13 @@ async changePassword(params: { id: string, role:string, password: string, confir
   return user;
 },
 
+/**
+   *
+   * Forget Password
+   *
+   */
+
+
 async forgotPassword(params: { email: string }) {
   const { email } = params;
   const LCEmail = email.toLowerCase();
@@ -594,16 +416,6 @@ async forgotPassword(params: { email: string }) {
       body: ForgetPasswordTemplate(Token),
     })
   });
-  
-
-
-  // const otp = generate2FACode();
-  // console.log(otp);
-  // const otpData = await VendorOtp.create({
-  //   email: LCEmail,
-  //   otp,
-  // });
-
 
 }
 }

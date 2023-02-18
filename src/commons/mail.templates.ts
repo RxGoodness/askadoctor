@@ -260,10 +260,10 @@ export const signupTemplate = `<!DOCTYPE html>
                           on AskADoctor:
                         </p>
                         <ul>
-                          <li>Get in contact with a contact</li>
+                          <li>Get in contact with a doctor</li>
                           <li>Easy access to health services</li>
                           <li>
-                            Make seemless payment for uptimum healthcare delivery on our&#39;s website
+                            Make seemless payment for optimum healthcare delivery on our&#39;s website
                           </li>
                         </ul>
                         <p>And so much more.</p>
