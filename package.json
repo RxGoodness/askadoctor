@@ -9,8 +9,6 @@
     "build": "tsc",
     "start": "ts-node ./src/index.ts"
   },
-  "author": "RxGoodness",
-  "license": "ISC",
   "dependencies": {
     "@ethereumjs/util": "^8.0.0-rc.1",
     "@metamask/eth-sig-util": "^4.0.1",
@@ -62,5 +60,7 @@
   "engines": {
     "node": "18.14.0"
   },
+  "author": "RxGoodness",
+  "license": "MIT",
   "repository": "https://github.com/RxGoodness/askadoctor.git"
 }
