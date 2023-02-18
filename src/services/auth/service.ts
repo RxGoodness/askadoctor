@@ -111,14 +111,21 @@ export default {
 
   async sendVerification(params: { email: string }) {
     const { email } = params;
-    console.log(11111111)
+    // console.log(11111111)
     const LCEmail = email.toLowerCase();
-    const user = userModel.findOne({ email: LCEmail });
+    const user = await userModel.findOne({ email: LCEmail });
     if(!user) {
       throw new APIError({
         status: 404,
         message: "user does not exist. Verification mail can only be sent to a user that has signed up. Proceed to sign up",
         //  proceed to sign-up",
+        path: "email",
+      });
+    };
+    if(user.is_verified === true) {
+      throw new APIError({
+        status: 403,
+        message: "user is already verified. Proceed to login",
         path: "email",
       });
     }
@@ -139,7 +146,7 @@ export default {
         body: VerifyUserTemplate(otp),
       })
     });
-    return { otpData };
+    return { user };
   },
 
 
@@ -163,7 +170,7 @@ async verifyUser(params: { email: string, otp: string }) {
     });
   }
 
-  if (user.is_verified) {
+  if (user.is_verified === true) {
     throw new APIError({
       status: 403,
       message: "user is already verified",
