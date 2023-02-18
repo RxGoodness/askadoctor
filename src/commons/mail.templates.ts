@@ -1381,18 +1381,10 @@ export const VerifyUserTemplate = (verification_code: string) => {
                                 cellpadding="0"
                                 cellspacing="0"
                               >
-                                <tr>
-                                  <td style="margin: 15px 0; display: flex">
-                                    <img
-                                      src="https://res.cloudinary.com/broma/image/upload/v1671132281/newlogo_rlijf9.png"
-                                      alt=""
-                                      style="margin-left: 10px; width: 130px"
-                                    />
-                                  </td>
                                 </tr>
                                 <tr>
                                   <td>
-                                    <p class="heading">Login on askadoctor</p>
+                                    <p class="heading">Verify email</p>
                                     <p>
                         You are one step away from becoming a user on AskADoctor!
                         </p>
@@ -1761,15 +1753,6 @@ export const AddDoctorTemplate = (verification_code: string, email: string) => {
                                       cellspacing="0"
                                     >
                                       <tr>
-                                        <td style="margin: 15px 0; display: flex">
-                                          <img
-                                            src="https://res.cloudinary.com/broma/image/upload/v1671132281/newlogo_rlijf9.png"
-                                            alt=""
-                                            style="margin-left: 10px; width: 130px"
-                                          />
-                                        </td>
-                                      </tr>
-                                      <tr>
                                         <td>
                                           <p class="heading">Welcome Doc</p>
                                           <p>
@@ -1884,21 +1867,6 @@ export const AddDoctorTemplate = (verification_code: string, email: string) => {
                   
                   return loginTemplate;
                       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 export const ForgetPasswordTemplate = (verification_link: string) => {
@@ -2155,15 +2123,6 @@ export const ForgetPasswordTemplate = (verification_link: string) => {
                                             cellpadding="0"
                                             cellspacing="0"
                                           >
-                                            <tr>
-                                              <td style="margin: 15px 0; display: flex">
-                                                <img
-                                                  src="https://res.cloudinary.com/broma/image/upload/v1671132281/newlogo_rlijf9.png"
-                                                  alt=""
-                                                  style="margin-left: 10px; width: 130px"
-                                                />
-                                              </td>
-                                            </tr>
                                             <tr>
                                               <td>
                                                 <p class="heading">Rest Password on askadoctor</p>
