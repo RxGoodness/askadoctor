@@ -4,10 +4,10 @@
   "description": "the backend for the askadoctor project",
   "main": "./dist/index.js",
   "scripts": {
-    "start": "node ./dist/index.js",
+    "start:dev": "node ./dist/index.js",
     "dev": "nodemon ./src/index.ts",
-    "start:dev": "ts-node esm ./src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "ts-node ./src/index.ts"
   },
   "author": "victor orlunda",
   "license": "ISC",
