@@ -1751,8 +1751,10 @@ export const AddDoctorTemplate = (verification_code: string, email: string) => {
                               These is your login credentials on AskADoctor website
                               </p>
                         <strong>
-                          email: ${email}
-                          password: ${parseInt(verification_code)}
+                        <ul>
+                          <li>Email: ${email}</li>
+                          <li>Password: ${verification_code}</li>
+                        </ul>
                         </strong>
                       </p>
                       <p>

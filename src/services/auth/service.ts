@@ -322,7 +322,6 @@ async addDoctor(params: IUser ){
 
   
   const password = doctorPassword(2,6);
-  console.log(doctorPassword);
   
   const hashedPassword = await hashPassword(password);
 
@@ -339,6 +338,7 @@ async addDoctor(params: IUser ){
   });
   const accessToken = await jwt.encode({ id: user.id, role: user.role });
 
+  console.log("password", password, email, JSON.stringify(password), JSON.stringify(email), parseInt(password), parseInt(email), Number(password), Number(email));
   setImmediate(async () => {
     await SendEmail({
       email,
@@ -347,7 +347,10 @@ async addDoctor(params: IUser ){
     })
   });
 
-  return { accessToken, user };
+  return { 
+    accessToken,
+     user 
+    };
 },
 
 /**
