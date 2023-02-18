@@ -52,11 +52,11 @@ authRouter.post('/initiate-login', [middleware.findUser, controller.findUser]);
 
 authRouter.post('/verify-login', [controller.verifyLogin]);
 
-authRouter.post('./add-doctor', [controller.addDoctor])
+authRouter.post('/add-doctor', [controller.addDoctor])
 
-authRouter.post('./change-password', [controller.changePassword])
+authRouter.post('/change-password', [controller.changePassword])
 
-authRouter.post('./forget-password', [controller.fogetPassword])
+authRouter.post('/forget-password', [controller.fogetPassword])
 
 
 
