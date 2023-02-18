@@ -251,7 +251,6 @@ export const signupTemplate = `<!DOCTYPE html>
                     cellpadding="0"
                     cellspacing="0"
                   >
-                    
                     <tr>
                       <td>
                         <p class="heading">Welcome to AskADoctor</p>
@@ -261,10 +260,10 @@ export const signupTemplate = `<!DOCTYPE html>
                           on AskADoctor:
                         </p>
                         <ul>
-                          <li>Create a virtual or in-person event.</li>
-                          <li>Create tickets for your event.</li>
+                          <li>Get in contact with a contact</li>
+                          <li>Easy access to health services</li>
                           <li>
-                            Integrate AskADoctor into your event&#39;s website
+                            Make seemless payment for uptimum healthcare delivery on our&#39;s website
                           </li>
                         </ul>
                         <p>And so much more.</p>
@@ -628,7 +627,6 @@ const loginTemplate = `<!DOCTYPE html>
                     cellpadding="0"
                     cellspacing="0"
                   >
-                    
                     <tr>
                       <td>
                         <p class="heading">Login on askadoctor</p>
@@ -638,7 +636,7 @@ const loginTemplate = `<!DOCTYPE html>
                         </p>
                         <p>
       <strong>
-        2FA Code: ${parseInt(verification_code)}
+        OTP: ${parseInt(verification_code)}
       </strong>
     </p>
     <p>
@@ -996,15 +994,6 @@ export const WelcomeTemplate = () => {
                           cellpadding="0"
                           cellspacing="0"
                         >
-                          <tr>
-                            <td style="margin: 15px 0; display: flex">
-                              <img
-                                src="https://res.cloudinary.com/broma/image/upload/v1671132281/newlogo_rlijf9.png"
-                                alt=""
-                                style="margin-left: 10px; width: 130px"
-                              />
-                            </td>
-                          </tr>
                           <tr>
                           <td>
                           <p class="heading">Welcome to AskADoctor</p>
@@ -1381,10 +1370,9 @@ export const VerifyUserTemplate = (verification_code: string) => {
                                 cellpadding="0"
                                 cellspacing="0"
                               >
-                                </tr>
                                 <tr>
                                   <td>
-                                    <p class="heading">Verify email</p>
+                                    <p class="heading">Login on askadoctor</p>
                                     <p>
                         You are one step away from becoming a user on AskADoctor!
                         </p>
@@ -1393,7 +1381,7 @@ export const VerifyUserTemplate = (verification_code: string) => {
                         Kindly enter the OTP below to verify your email
                         </p>
                   <strong>
-                    2FA Code: ${parseInt(verification_code)}
+                    OTP: ${parseInt(verification_code)}
                   </strong>
                 </p>
                 <p>
@@ -1752,7 +1740,7 @@ export const AddDoctorTemplate = (verification_code: string, email: string) => {
                                       cellpadding="0"
                                       cellspacing="0"
                                     >
-                                      <tr>
+                                    <tr>
                                         <td>
                                           <p class="heading">Welcome Doc</p>
                                           <p>
@@ -1867,6 +1855,13 @@ export const AddDoctorTemplate = (verification_code: string, email: string) => {
                   
                   return loginTemplate;
                       }
+
+
+
+
+
+
+
 
 
 export const ForgetPasswordTemplate = (verification_link: string) => {
