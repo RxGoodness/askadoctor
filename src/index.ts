@@ -11,7 +11,7 @@ import * as path from 'path';
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 import { services } from './services';
-import {chatService} from './services/chat/service';
+import ChatService from './services/chat/service';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import {
@@ -23,6 +23,9 @@ import {
 } from './config';
 import { _404ErrorHandler, expressErrorHandler } from './commons';
 // import { chatService } from './services/chatService';
+import { Message, IMessage } from './models/chat';
+import mongoose from 'mongoose';
+
 
 /**
  *
@@ -37,27 +40,58 @@ const server = createServer(app);
 
 const io = new Server(server);
 
+
+// Define socket event listeners
 io.on('connection', (socket: Socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  // Listen for chat messages
-  socket.on('chat-message', async (data) => {
-    try {
-      // Store the message in the database
-      const message = await chatService.storeMessage(data.message);
+  // Handle incoming chat messages
+  socket.on('message', async (data: { content: string, senderId: string, receiverId: string }) => {
+    const { content, senderId, receiverId } = data;
 
-      // Broadcast the message to all connected clients
-      io.emit('chat-message', { message });
-    } catch (err) {
-      console.error(`Failed to store chat message: ${err}`);
+    try {
+      const message: IMessage = await Message.create({
+        content,
+        senderId: new mongoose.Types.ObjectId(senderId),
+        receiverId: new mongoose.Types.ObjectId(receiverId),
+        timestamp: new Date(),
+      });
+
+      socket.emit('message', message);
+      socket.to(receiverId).emit('message', message);
+    } catch (error) {
+      console.error(error);
     }
   });
 
-  // Disconnect event
+  // Handle socket disconnections
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
   });
 });
+
+
+// io.on('connection', (socket: Socket) => {
+//   console.log(`User connected: ${socket.id}`);
+
+//   // Listen for chat messages
+//   socket.on('chat-message', async (data) => {
+//     try {
+//       // Store the message in the database
+//       const message = await ChatService.saveMessage(data.message);
+
+//       // Broadcast the message to all connected clients
+//       io.emit('chat-message', { message });
+//     } catch (err) {
+//       console.error(`Failed to store chat message: ${err}`);
+//     }
+//   });
+
+//   // Disconnect event
+//   socket.on('disconnect', () => {
+//     console.log(`User disconnected: ${socket.id}`);
+//   });
+// });
 // export const io = new Server(server, {
 //   cors: { origin: '*' },
 //   transports: ['polling', 'websocket'],
