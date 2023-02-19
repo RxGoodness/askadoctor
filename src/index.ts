@@ -11,6 +11,7 @@ import * as path from 'path';
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 import { services } from './services';
+import {chatService} from './services/chat/service';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import {
@@ -21,6 +22,7 @@ import {
   env,
 } from './config';
 import { _404ErrorHandler, expressErrorHandler } from './commons';
+// import { chatService } from './services/chatService';
 
 /**
  *
@@ -30,6 +32,32 @@ import { _404ErrorHandler, expressErrorHandler } from './commons';
 
 const app = express();
 const server = createServer(app);
+
+
+
+const io = new Server(server);
+
+io.on('connection', (socket: Socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  // Listen for chat messages
+  socket.on('chat-message', async (data) => {
+    try {
+      // Store the message in the database
+      const message = await chatService.storeMessage(data.message);
+
+      // Broadcast the message to all connected clients
+      io.emit('chat-message', { message });
+    } catch (err) {
+      console.error(`Failed to store chat message: ${err}`);
+    }
+  });
+
+  // Disconnect event
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
 // export const io = new Server(server, {
 //   cors: { origin: '*' },
 //   transports: ['polling', 'websocket'],
