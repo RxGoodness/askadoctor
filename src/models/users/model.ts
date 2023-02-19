@@ -13,6 +13,7 @@ import { Schema, Types, model } from "mongoose";
  */
 
 export interface IUser {
+  _id?: Types.ObjectId;
   firstName?: string;
   lastName?: string;
   designation?: string;
