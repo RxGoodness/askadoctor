@@ -159,4 +159,16 @@ async resetPassword(req: Request, res: Response, next: NextFunction) {
   }
 },
 
+
+async login(req: Request, res: Response, next: NextFunction) {
+  try {
+    const data = req.body;
+    const user = await service.login(data);
+    APIresponse(res, 201, 'Successful. Logggin in was a success', user);
+  } catch (error) {
+    next(error);
+  }
+},
+
+
 };
