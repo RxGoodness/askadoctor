@@ -8,11 +8,13 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import * as path from 'path';
+import http from 'http'
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 import { services } from './services';
 import { createServer } from 'http';
-import { Server, Socket } from 'socket.io';
+import socketIO, { Server, Socket } from 'socket.io';
+// import io from 'socket.io'
 import {
   connectDatabases,
   morgan_mode,
@@ -29,17 +31,71 @@ import { _404ErrorHandler, expressErrorHandler } from './commons';
  */
 
 const app = express();
+// const server = http.createServer(app);
 const server = createServer(app);
-// export const io = new Server(server, {
-//   cors: { origin: '*' },
-//   transports: ['polling', 'websocket'],
+
+
+
+// import { createServer } from "http";
+// import { Server, Socket } from "socket.io";
+
+const httpServer = createServer();
+// console.log(httpServer)
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+// io.on("connection", (socket: Socket) => {
+//   // handle socket.io events
 // });
 
-/**
- *
- * mount sockets
- *
- */
+
+interface User {
+  userId: string;
+  socketId: string;
+}
+
+let activeUsers: User[] = [];
+
+io.on("connection", (socket: Socket) => {
+  // add new User
+  socket.on("new-user-add", (newUserId: string) => {
+    // if user is not added previously
+    if (!activeUsers.some((user) => user.userId === newUserId)) {
+      activeUsers.push({ userId: newUserId, socketId: socket.id });
+      console.log("New User Connected", activeUsers);
+    }
+    // send all active users to new user
+    io.emit("get-users", activeUsers);
+  });
+
+  socket.on("disconnect", () => {
+    // remove user from active users
+    activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
+    console.log("User Disconnected", activeUsers);
+    // send all active users to all users
+    io.emit("get-users", activeUsers);
+  });
+
+  // send message to a specific user
+  socket.on("send-message", (data: { receiverId: string }) => {
+    const { receiverId } = data;
+    const user = activeUsers.find((user) => user.userId === receiverId);
+    console.log("Sending from socket to :", receiverId);
+    console.log("Data: ", data);
+    if (user) {
+      io.to(user.socketId).emit("recieve-message", data);
+    }
+  });
+});
+
+httpServer.listen(2500, () => {
+    console.log("Socket Server running on port 2500");
+  });
+
+
 
 // io.on('connection', async (socket: Socket) => {
 //   socket.emit('ping', { message: 'pong! successfully connected!' });
