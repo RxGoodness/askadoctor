@@ -519,6 +519,36 @@ async resetPassword(params: { email: string, otp: string, password: string, conf
   await VendorLoginOtp.deleteMany({ email: LCEmail });
   const token = await jwt.encode({ id: updatedUser.id, role: updatedUser.role });
   return { token, user: updatedUser};
-}
+},
+
+async login(params: { username: string, password: string }) {
+  const { username, password } = params;
+  const LCusername = username.toLowerCase();
+  const user = await userModel.findOne({ username: LCusername })
+
+  if (!user) {
+    throw new APIError({
+      status: 404,
+      message: "user does not exist, proceed to sign-up",
+      path: "username",
+    });
+  }
+ 
+  const isMatch = await comparePassword(password, user.password);
+  if(!isMatch) {
+    throw new APIError({
+      status: 404,
+      message: "Incorrect credentials",
+      path: "password",
+    });
+  }
+  // Delete all previous otps
+  
+  const { id, role } = user;
+  const accessToken = await jwt.encode({ id: id, role: role });
+
+  return { accessToken, user };
+},
+
 
 }
