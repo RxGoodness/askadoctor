@@ -6,6 +6,7 @@
 
 import { Router } from "express";
 import { authRouter } from "./auth";
+import {router as chatRouter} from "./chat"
 // import { eventRouter } from "./events";
 // import { notificationRouter } from "./notification";
 // import { miscRouter } from "./misc";
@@ -24,6 +25,7 @@ import { authRouter } from "./auth";
 export const services = Router();
 
 services.use("/auth", authRouter);
+services.use("/chat", chatRouter)
 // services.use("/events", eventRouter);
 // services.use("/tickets", ticketRouter);
 // services.use("/misc", miscRouter);

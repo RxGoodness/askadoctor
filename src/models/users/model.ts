@@ -17,6 +17,7 @@ export interface IUser {
   lastName?: string;
   designation?: string;
   status?: boolean;
+  username?: string
   // country: string;
   // bio?: string;
   // profileImg?: string;
@@ -28,6 +29,8 @@ export interface IUser {
   // confirmPassword?: string;
   // comparePassword: (password: string) => Promise<boolean>;
   role: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 /**
@@ -46,7 +49,7 @@ const schema = {
       status: { type: String, required: true, enum: ["active", "inactive"],
       default: "active" },
 
-      // username: { type: String, required: true },
+      username: { type: String, required: false },
       // bio: { type: String, required: false },
       // country: { type: String, required: true },
       // organization: { type: String, required: true },
