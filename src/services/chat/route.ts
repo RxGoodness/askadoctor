@@ -1,33 +1,33 @@
 import express from "express";
 import { Request, Response } from "express";
 import controller from "./controller";
+import middleware from "./middleware";
 import { authorizedUser, verifyAcessToken } from "../../commons";
 
 const router = express.Router();
 
-router.post("/", [verifyAcessToken, controller.createChats]);
+router.post("/", [verifyAcessToken, middleware.createChat, controller.createChat]);
 
-router.get("/:userId", controller.userChatss);
+router.get("/:userId", controller.userChat);
 
-router.get("/find/:firstId/:secondId", controller.findChats);
+router.get("/find/:firstId/:secondId", controller.findChat);
 
-router.post("/add-messages", [verifyAcessToken, controller.addMessagess]);
+router.post("/add-messages", [verifyAcessToken, middleware.addMessage, controller.addMessage]);
 
-router.get("/:chatId", controller.getMessagess);
+router.get("/:chatId", controller.getMessage);
 
-router.get("/:senderId", [verifyAcessToken,authorizedUser("admin", "doctor"), controller.getUserMessages]);
+router.get("/:senderId", [verifyAcessToken,authorizedUser("admin", "doctor"), controller.getUserMessage]);
 
 router.get("/", [
   verifyAcessToken,
   authorizedUser("admin", "doctor"),
-  controller.getAllMessages,
+  controller.getAllMessage,
 ]);
 
-router.post("/", controller.createPosts);
-router.get("/:id", controller.getPosts);
-router.put("/:id", controller.updatePosts);
-router.delete("/:id", controller.deletePosts);
-router.put("/:id/like", controller.likePosts);
-// router.get('/:id/timeline', controller.getTimelinePosts);
+router.post("/", controller.createPost);
+router.get("/:id", controller.getPost);
+router.put("/:id", controller.updatePost);
+router.delete("/:id", controller.deletePost);
+router.put("/:id/like", controller.likePost);
 
 export { router };
