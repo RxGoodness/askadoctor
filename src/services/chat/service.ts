@@ -60,7 +60,7 @@ export default {
   },
 
   async addMessage(params: IMessage) {
-    const { senderId, chatId, recieverId, text } = params;
+    const { senderId, chatId, receiverId, text } = params;
     const sender = senderId ? await userModel.findById(senderId) : null;
 
     if (!senderId) {
@@ -71,14 +71,14 @@ export default {
       });
     }
 
-    // Find reciever role
-    const reciever = recieverId ? await userModel.findById(recieverId) : null;
+    // Find receiver role
+    const receiver = receiverId ? await userModel.findById(receiverId) : null;
     const message = new messageModel({
       chatId,
       senderId,
-      recieverId,
+      receiverId,
       senderRole: sender?.role,
-      recieverRole: reciever?.role,
+      receiverRole: receiver?.role,
       text,
     });
     const result = await message.save();
@@ -102,7 +102,7 @@ export default {
       });
     }
     const result = await messageModel.find({
-      $or: [{ senderId }, { recieverId: senderId }],
+      $or: [{ senderId }, { receiverId: senderId }],
     });
     return result;
   },

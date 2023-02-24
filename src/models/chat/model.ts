@@ -23,9 +23,9 @@ export const chatModel: Model<IChat> = mongoose.model<IChat>(
 export interface IMessage extends Document {
   chatId: string;
   senderRole: string;
-  recieverRole: string;
+  receiverRole: string;
   senderId: string;
-  recieverId: string;
+  receiverId: string;
   text: string;
 }
 
@@ -37,13 +37,13 @@ const MessageSchema = new mongoose.Schema(
     senderId: {
       type: String,
     },
-    recieverId: {
+    receiverId: {
       type: String,
     },
     senderRole: {
       type: String,
     },
-    recieverRole: {
+    receiverRole: {
       type: String,
     },
     text: {

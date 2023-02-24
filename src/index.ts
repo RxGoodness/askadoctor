@@ -47,10 +47,6 @@ const io = new Server(httpServer, {
   },
 });
 
-// io.on("connection", (socket: Socket) => {
-//   // handle socket.io events
-// });
-
 
 interface User {
   userId: string;
@@ -86,7 +82,7 @@ io.on("connection", (socket: Socket) => {
     console.log("Sending from socket to :", receiverId);
     console.log("Data: ", data);
     if (user) {
-      io.to(user.socketId).emit("recieve-message", data);
+      io.to(user.socketId).emit("receive-message", data);
     }
   });
 });
@@ -95,21 +91,6 @@ httpServer.listen(2500, () => {
     console.log("Socket Server running on port 2500");
   });
 
-
-
-// io.on('connection', async (socket: Socket) => {
-//   socket.emit('ping', { message: 'pong! successfully connected!' });
-
-//   socket.on('ticket:buy', async (payload: { userId: string }) => {
-//     const key = 'ticket:buy' + payload.userId;
-//     await redisClient.setEx(key, 86400, socket.id);
-//   });
-
-//   socket.on('ticket:mint', async (payload: { userId: string }) => {
-//     const key = 'ticket:mint' + payload.userId;
-//     await redisClient.setEx(key, 86400, socket.id);
-//   });
-// });
 
 /**
  *

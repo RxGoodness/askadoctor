@@ -12,7 +12,7 @@ export default {
 
   addMessage: object({
     senderId: string({ required_error: "senderId is required" }),
-    recieverId: string({ required_error: "recieverId is required" }),
+    receiverId: string({ required_error: "receiverId is required" }),
     chatId: string({ required_error: "chatId is required" }),
     text: string({ required_error: "text is required" }),
   }).strict(),
