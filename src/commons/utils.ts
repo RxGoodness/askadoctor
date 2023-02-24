@@ -22,6 +22,7 @@ import * as path from "path";
 const swaggerJSDoc = require("swagger-jsdoc");
 import * as nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { User_Role, User_Status } from "../models";
 // const { Webhook, MessageBuilder } = require("discord-webhook-node");
 // const discordHook = new Webhook(discordurl);
 
@@ -128,6 +129,7 @@ export async function verifyAcessToken(
 
     req.decoded = { id: decoded.id, role: decoded.role };
     next();
+    console.log("req.decoded", req.decoded);
   } catch (error) {
     next(error);
   }
@@ -143,6 +145,25 @@ function handleAuthHeader(authHeader: string | undefined) {
 
   return authHeader;
 }
+
+export function parseUserRole(val: string) {
+  if (!val) return false;
+
+  // if (val === User_Role.admin || val === User_Role.doctor || val === User_Role.user) return true;
+  if (val === User_Role.doctor) return true;
+
+  return false;
+}
+
+export function parseUserStatus(val: string) {
+  if (!val) return false;
+
+  if (val === User_Status.active || val === User_Status.inactive) return true;
+
+  return false;
+}
+
+
 
 
 export function parseDate(val: string) {
@@ -400,3 +421,40 @@ export function doctorPassword(x:number, y:number) {
     }
     return randomAlphaString + randomNumString;
 }
+
+// export const authorize =
+//     (...roles: AdminRole[]) =>
+//     (req: Request, res: Response, next: NextFunction): void => {
+//         if (!roles.includes(req.user.role)) {
+//             return next(
+//                 new ApiError(
+//                     httpStatus.FORBIDDEN,
+//                     `Admin role ${req.user.role} is not authorized to access this route`,
+//                 ),
+//             );
+//         }
+//         next();
+//     };
+
+
+export const authorizedUser =
+    (...roles: string[]) =>
+    (req: Request, res: Response, next: NextFunction): void => {
+      console.log("check rolessss", roles, req.decoded?.role)
+      if(req.decoded?.role === undefined) {
+        throw new APIError({
+          status: 403,
+          message: `User is not authorized to access this route`,
+          path: "registration email",
+        });
+      }
+        if (!roles.includes(req.decoded.role)) {
+          console.log("check role", roles, req.decoded.role)
+          throw new APIError({
+            status: 403,
+            message: `${req.decoded?.role} is not authorized to access this route`,
+            path: "registration email",
+          });
+        }
+        next();
+    };
