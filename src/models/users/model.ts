@@ -33,6 +33,19 @@ export interface IUser {
   updatedAt?: Date;
 }
 
+
+export enum User_Role {
+  admin = "admin",
+  doctor = "doctor",
+  user = "user"
+}
+
+export enum User_Status {
+  active = "active",
+  inactive = "inactive",
+}
+
+
 /**
  *
  * Schemas
