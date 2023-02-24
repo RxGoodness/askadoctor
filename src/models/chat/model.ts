@@ -1,6 +1,6 @@
 import mongoose, { Document, Model } from "mongoose";
 
-export interface IChats extends Document {
+export interface IChat extends Document {
   members: any[];
 }
 
@@ -15,12 +15,12 @@ const ChatSchema = new mongoose.Schema(
   }
 );
 
-export const ChatsModel: Model<IChats> = mongoose.model<IChats>(
+export const chatModel: Model<IChat> = mongoose.model<IChat>(
   "Chats",
   ChatSchema
 );
 
-export interface IMessages extends Document {
+export interface IMessage extends Document {
   chatId: string;
   senderRole: string;
   recieverRole: string;
@@ -55,12 +55,12 @@ const MessageSchema = new mongoose.Schema(
   }
 );
 
-export const MessagesModel: Model<IMessages> = mongoose.model<IMessages>(
-  "Messages",
+export const messageModel: Model<IMessage> = mongoose.model<IMessage>(
+  "Message",
   MessageSchema
 );
 
-export interface IPosts extends Document {
+export interface IPost extends Document {
   userId: string;
   desc: string;
   likes: any[];
@@ -84,9 +84,7 @@ const postSchema = new mongoose.Schema(
   }
 );
 
-export const PostsModel: Model<IPosts> = mongoose.model<IPosts>(
-  "Postss",
+export const postModel: Model<IPost> = mongoose.model<IPost>(
+  "Post",
   postSchema
 );
-
-// export default ChattingModel;
