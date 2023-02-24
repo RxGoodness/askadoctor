@@ -4,8 +4,8 @@
  *
  */
 
-import { Request, Response, NextFunction } from 'express';
-import schema from './schema';
+import { Request, Response, NextFunction } from "express";
+import schema from "./schema";
 
 /**
  *
@@ -34,7 +34,7 @@ export default {
    * find user
    *
    */
-  
+
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       await schema.login.parseAsync(req.body);
@@ -53,7 +53,6 @@ export default {
     }
   },
 
-
   async verification(req: Request, res: Response, next: NextFunction) {
     try {
       await schema.verification.parseAsync(req.body);
@@ -71,7 +70,6 @@ export default {
       next(error);
     }
   },
-  
 
   async changePassword(req: Request, res: Response, next: NextFunction) {
     try {
@@ -90,6 +88,4 @@ export default {
       next(error);
     }
   },
-  
-
 };
