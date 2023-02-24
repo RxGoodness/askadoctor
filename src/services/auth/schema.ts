@@ -113,7 +113,8 @@ export default {
     id: string({ required_error: "id is required" }),
     password: string({ required_error: "password is required" }).min(8),
     confirmPassword: string({ required_error: "password is required" }).min(8),
-  }).strict()
+  })
+    .strict()
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
       path: ["confirmPassword"],
@@ -129,9 +130,10 @@ export default {
     }),
     password: string({ required_error: "password is required" }).min(8),
     confirmPassword: string({ required_error: "password is required" }).min(8),
-  }).strict()
+  })
+    .strict()
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
       path: ["confirmPassword"],
-    })
+    }),
 };
