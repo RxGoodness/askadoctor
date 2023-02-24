@@ -8,7 +8,7 @@ export default {
      *
      */
 createChat: object({
-    senderId: string({ required_error: "senderId is required" }),
+    recieverId: string({ required_error: "senderId is required" }),
   }).strict(),
 
   addMessage: object({
