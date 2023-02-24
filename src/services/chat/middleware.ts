@@ -1,6 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import schema from './schema';
-
+import { Request, Response, NextFunction } from "express";
+import schema from "./schema";
 
 /**
  *
@@ -9,28 +8,28 @@ import schema from './schema';
  */
 
 export default {
-    /**
-     *
-     * create chat
-     *
-     */
+  /**
+   *
+   * create chat
+   *
+   */
 
-    async createChat(req: Request, res: Response, next: NextFunction) {
-        try {
-          await schema.createChat.parseAsync(req.body);
-          next();
-        } catch (error) {
-          next(error);
-        }
-      },
+  async createChat(req: Request, res: Response, next: NextFunction) {
+    try {
+      console.log(req.body);
+      await schema.createChat.parseAsync(req.body);
+      next();
+    } catch (error) {
+      next(error);
+    }
+  },
 
-      async addMessage(req: Request, res: Response, next: NextFunction) {
-        try {
-          await schema.addMessage.parseAsync(req.body);
-          next();
-        } catch (error) {
-          next(error);
-        }
-      },
-
-}
+  async addMessage(req: Request, res: Response, next: NextFunction) {
+    try {
+      await schema.addMessage.parseAsync(req.body);
+      next();
+    } catch (error) {
+      next(error);
+    }
+  },
+};
