@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   ChatsModel,
   MessagesModel,
@@ -10,12 +10,36 @@ import {
   userModel,
 } from "../../models";
 import { getMessages } from "./controllers";
+import { APIresponse } from '../../commons';
+import service from './service';
+
 import mongoose from "mongoose";
 
 // import {MessageModel} from "../../../models";
 
 export default {
-  async createChats(req: Request, res: Response) {
+
+/**
+   *
+   * create chat
+   *
+   */
+
+
+async createChats(req: Request, res: Response, next: NextFunction) {
+  try {
+    const senderId = <string>req.decoded?.id;
+    const {receiverId} = req.body;
+    console.log("chack new implementation")
+    const data = await service.createChats({senderId, receiverId});
+
+    APIresponse(res, 201, 'Chat created', data);
+  } catch (error) {
+    next(error);
+  }
+},
+
+  async AcreateChats(req: Request, res: Response) {
     const senderId = req.decoded?.id;
     const newChat = new ChatsModel({
       members: [senderId, req.body.receiverId],
@@ -28,7 +52,20 @@ export default {
     }
   },
 
-  async userChatss(req: Request, res: Response) {
+  async userChatss(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {userId} = req.params;
+      // const pa
+      // const {receiverId} = req.body;
+      const data = await service.userChatss({userId});
+  
+      APIresponse(res, 201, 'User chats retrieved successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async AuserChatss(req: Request, res: Response) {
     try {
       const chat = await ChatsModel.find({
         members: { $in: [req.params.userId] },
@@ -39,7 +76,19 @@ export default {
     }
   },
 
-  async findChats(req: Request, res: Response) {
+  async findChats(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {firstId, secondId} = req.params
+      const data = await service.findChats({firstId, secondId});
+  
+      APIresponse(res, 201, 'Chats retrieved successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+
+  async AfindChats(req: Request, res: Response) {
     try {
       const chat = await ChatsModel.findOne({
         members: { $all: [req.params.firstId, req.params.secondId] },
@@ -50,7 +99,21 @@ export default {
     }
   },
 
-  async addMessagess(req: Request, res: Response) {
+  async addMessagess(req: Request, res: Response, next: NextFunction) {
+    try {
+    const senderId = req.decoded?.id;
+    const body = req.body
+      // const {firstId, secondId} = req.params
+      const data = await service.addMessagess({senderId, ...body});
+  
+      APIresponse(res, 201, 'Message added successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+
+  async AaddMessagess(req: Request, res: Response) {
     const senderId = req.decoded?.id;
     // Find sender role
     const sender = senderId ? await userModel.findById(senderId) : null;
@@ -76,7 +139,22 @@ export default {
     }
   },
 
-  async getMessagess(req: Request, res: Response) {
+
+  async getMessagess(req: Request, res: Response, next: NextFunction) {
+    try {
+    const {chatId} = req.params;
+    // const body = req.body
+      // const {firstId, secondId} = req.params
+      const data = await service.getMessagess({chatId});
+  
+      APIresponse(res, 201, 'Message retrieved successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+
+  async AgetMessagess(req: Request, res: Response) {
     const { chatId } = req.params;
     try {
       const result = await MessagesModel.find({ chatId });
@@ -86,8 +164,22 @@ export default {
     }
   },
 
+
+  async getUserMessages(req: Request, res: Response, next: NextFunction) {
+    try {
+    // const {chatId} = req.params;
+    const {senderId} = req.params;
+    // const body = req.body
+      // const {firstId, secondId} = req.params
+      const data = await service.getUserMessages({senderId});
+  
+      APIresponse(res, 201, 'Message retrieved successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
   // Get all messages from a user
-    async getUserMessages(req: Request, res: Response) {
+    async AgetUserMessages(req: Request, res: Response) {
         const {senderId} = req.params;
         if (!senderId) return res.status(401).json({ message: "Unauthorized" });
         try {
@@ -100,8 +192,22 @@ export default {
         }
     },
 
+
+    async getAllMessages(req: Request, res: Response, next: NextFunction) {
+      try {
+      // const {chatId} = req.params;
+      // const {senderId} = req.params;
+      // const body = req.body
+        // const {firstId, secondId} = req.params
+        const data = await service.getAllMessages();
+    
+        APIresponse(res, 201, 'All Messages retrieved successfully', data);
+      } catch (error) {
+        next(error);
+      }
+    },
     // Get all messages
-    async getAllMessages(req: Request, res: Response) {
+    async AgetAllMessages(req: Request, res: Response) {
         try {
             const result = await MessagesModel.find();
             res.status(200).json(result);
@@ -109,9 +215,24 @@ export default {
             res.status(500).json(error);
         }
     },
+
+
+    async createPosts(req: Request, res: Response, next: NextFunction) {
+      try {
+      // const {chatId} = req.params;
+      // const {senderId} = req.params;
+      const body = req.body
+        // const {firstId, secondId} = req.params
+        const data = await service.createPosts(body);
+    
+        APIresponse(res, 201, 'Post created successfully', data);
+      } catch (error) {
+        next(error);
+      }
+    },
   // creating a post
 
-  async createPosts(req: Request, res: Response) {
+  async AcreatePosts(req: Request, res: Response) {
     const newPost: IPosts = new PostsModel(req.body);
 
     try {
@@ -122,9 +243,26 @@ export default {
     }
   },
 
+
   // get a post
 
-  async getPosts(req: Request, res: Response) {
+
+
+  async getPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+    const {id} = req.params;
+    // const {senderId} = req.params;
+    // const body = req.body
+      // const {firstId, secondId} = req.params
+      const data = await service.getPosts({id});
+  
+      APIresponse(res, 201, 'Posts retrieved successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async AgetPosts(req: Request, res: Response) {
     const id: string = req.params.id;
 
     try {
@@ -135,8 +273,27 @@ export default {
     }
   },
 
+
+
   // update post
-  async updatePosts(req: Request, res: Response) {
+
+
+  async updatePosts(req: Request, res: Response, next: NextFunction) {
+    try {
+    const {postId} = req.params;
+    // const {senderId} = req.params;
+    const body = req.body
+      // const {firstId, secondId} = req.params
+      const data = await service.updatePosts({postId, body});
+  
+      APIresponse(res, 201, 'Post updated successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+
+  async AupdatePosts(req: Request, res: Response) {
     const postId: string = req.params.id;
     const { userId } = req.body;
 
@@ -153,8 +310,26 @@ export default {
     }
   },
 
+
+
+
   // delete a post
-  async deletePosts(req: Request, res: Response) {
+  async deletePosts(req: Request, res: Response, next: NextFunction) {
+    try {
+    const {id} = req.params;
+    // const {senderId} = req.params;
+    const {userId} = req.body
+      // const {firstId, secondId} = req.params
+      const data = await service.deletePosts({id, userId});
+  
+      APIresponse(res, 201, 'Post deleted successfully', data);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+
+  async AdeletePosts(req: Request, res: Response) {
     const id: string = req.params.id;
     const { userId } = req.body;
 
