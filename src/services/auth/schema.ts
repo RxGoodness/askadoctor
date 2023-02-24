@@ -48,8 +48,7 @@ export default {
     // organization: string({ required_error: "organization is required" }),
     // country: string({ required_error: "country is required" }),
     // role: string().(),
-
-  }),
+  }).strict(),
 
   /**
    *
@@ -62,67 +61,77 @@ export default {
       message: "email format is not supported",
     }),
     password: string({ required_error: "password is required" }).min(8),
-  }),
+  }).strict(),
 
   sendUserverification: object({
     email: string({ required_error: "email is required" }).email({
       message: "email format is not supported",
     }),
-  }),
+  }).strict(),
 
   verification: object({
     email: string({ required_error: "email is required" }).email({
       message: "email format is not supported",
     }),
-    otp: string({ required_error: "otp is required" }).length(6, { message: 'Must be exactly 6 characters long'}),
-  }),
+    otp: string({ required_error: "otp is required" }).length(6, {
+      message: "Must be exactly 6 characters long",
+    }),
+  }).strict(),
 
   addDoctor: object({
     email: string({ required_error: "email is required" }).email({
       message: "email format is not supported",
     }),
-    role: string({ required_error: "role is required" }).refine((val: string) => parseUserRole(val), {
-      message:
-      "Invalid value for user! only 'doctor' or 'admin' or 'user' is allowed.",
-      // "Invalid value for user! only 'doctor' is allowed.",
-    }),
+    role: string({ required_error: "role is required" }).refine(
+      (val: string) => parseUserRole(val),
+      {
+        message:
+          "Invalid value for user! only 'doctor' or 'admin' or 'user' is allowed.",
+        // "Invalid value for user! only 'doctor' is allowed.",
+      }
+    ),
 
-    status: string({ required_error: "status is required" }).refine((val: string) => parseUserStatus(val), {
-      message:
-      "Invalid value for user! only 'active' or 'inactive' user status is allowed.",
-    }),
+    status: string({ required_error: "status is required" }).refine(
+      (val: string) => parseUserStatus(val),
+      {
+        message:
+          "Invalid value for user! only 'active' or 'inactive' user status is allowed.",
+      }
+    ),
     password: string({ required_error: "password is required" }).min(8),
-  }),
+  }).strict(),
 
   changePassword: object({
-    role: string({ required_error: "role is required" }).refine((val: string) => parseUserRole(val), {
-      message:
-      "Invalid value for user! only 'doctor' or 'admin' or 'user' is allowed.",
-    }),
+    role: string({ required_error: "role is required" }).refine(
+      (val: string) => parseUserRole(val),
+      {
+        message:
+          "Invalid value for user! only 'doctor' or 'admin' or 'user' is allowed.",
+      }
+    ),
 
     id: string({ required_error: "id is required" }),
     password: string({ required_error: "password is required" }).min(8),
     confirmPassword: string({ required_error: "password is required" }).min(8),
-
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  }),
+  }).strict()
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    }),
 
   resetPassword: object({
     email: string({ required_error: "email is required" }).email({
       message: "email format is not supported",
     }),
 
-    otp: string({ required_error: "otp is required" }).length(6, { message: 'Must be exactly 6 characters long'}),
+    otp: string({ required_error: "otp is required" }).length(6, {
+      message: "Must be exactly 6 characters long",
+    }),
     password: string({ required_error: "password is required" }).min(8),
     confirmPassword: string({ required_error: "password is required" }).min(8),
-
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  }),
-
-
-
+  }).strict()
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    })
 };
