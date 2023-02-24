@@ -64,6 +64,4 @@ authRouter.post('/reset-password', [middleware.resetPassword, controller.resetPa
 authRouter.post('/login', [middleware.login, controller.login])
 
 
-
-
 // authRouter.post('/verify-otp', [controller.verifyOtp]);
